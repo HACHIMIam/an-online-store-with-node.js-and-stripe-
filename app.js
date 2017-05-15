@@ -7,8 +7,11 @@ var bodyParser = require('body-parser');
 var expressHbs = require('express-handlebars');
 var index = require('./routes/index');
 var users = require('./routes/users');
+var mongoose = require('mongoose');
 
 var app = express();
+mongoose.connect('localhost:27017/mystore');
+
 
 // view engine setup
 
