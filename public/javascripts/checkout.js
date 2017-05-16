@@ -1,9 +1,7 @@
 Stripe.setPublishableKey('pk_test_86SEdDzSFAincPovlMMrW3V6');
-
 var $form = $('#checkout-form');
-
 $form.submit(function(event) {
-    $('#charge-error').addClass('hidden');
+    $('#charge-error').removeClass('hidden');
     $form.find('button').prop('disabled', true);
     Stripe.card.createToken({
         number: $('#card-number').val(),
@@ -16,11 +14,13 @@ $form.submit(function(event) {
 });
 
 function stripeResponseHandler(status, response) {
+
     if (response.error) { // Problem!
 
         // Show the errors on the form
         $('#charge-error').text(response.error.message);
         $('#charge-error').removeClass('hidden');
+
         $form.find('button').prop('disabled', false); // Re-enable submission
 
     } else { // Token was created!

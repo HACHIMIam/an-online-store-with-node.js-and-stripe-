@@ -11,14 +11,13 @@ var passport = require('passport');
 var flash = require('connect-flash');
 var validator = require('express-validator');
 var MongoStore = require('connect-mongo')(session);
-
 var routes = require('./routes/index');
 var userRoutes = require('./routes/user');
 
 var app = express();
 
 mongoose.connect('localhost:27017/shopping');
-require('./authentificat/passport');
+require('./config/passport');
 
 // view engine setup
 app.engine('.hbs', expressHbs({ defaultLayout: 'layout', extname: '.hbs' }));
@@ -35,12 +34,10 @@ app.use(session({
     secret: 'mysupersecret',
     resave: false,
     saveUninitialized: false,
-    store: new MongoStore({ mongooseConnection: mongoose.connection })
+    store: new MongoStore({ mongooseConnection: mongoose.connection }),
+    cookie: { maxAge: 180 * 60 * 1000 }
+
 }));
-app.use(function(req, res, next) {
-    req.session.cookie.maxAge = 180 * 60 * 1000;
-    next();
-});
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
@@ -48,6 +45,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function(req, res, next) {
     res.locals.login = req.isAuthenticated();
+    res.locals.session = req.session; //we store a local variable with the name session to access it in all views without mention it expecetly in the route 
     next();
 });
 
